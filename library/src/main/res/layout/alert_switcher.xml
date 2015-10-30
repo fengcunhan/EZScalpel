@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:padding="16dp"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/switcher_tv"
+        android:text="@string/switcher_3D"/>
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/switcher_3D"
+        android:layout_alignBaseline="@id/switcher_tv"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/switcher_tv"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/switcher_tv"
+        android:layout_marginTop="12dp"
+        android:id="@+id/view_id_tv"
+        android:text="@string/view_id"/>
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/switcher_view_id"
+        android:layout_alignBaseline="@id/view_id_tv"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/view_id_tv"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/switcher_wireframe_tv"
+        android:layout_below="@id/switcher_view_id"
+        android:layout_marginTop="12dp"
+        android:text="@string/wireframe"/>
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/switcher_wireframe"
+        android:layout_alignBaseline="@id/switcher_wireframe_tv"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/switcher_wireframe_tv"/>
+</RelativeLayout>

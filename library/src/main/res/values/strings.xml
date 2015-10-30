@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">library</string>
+    <string name="switcher_3D">Scalpel 3D</string>
+    <string name="view_id">Show view ID</string>
+    <string name="wireframe">wireframe</string>
+</resources>
