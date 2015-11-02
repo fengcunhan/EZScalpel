@@ -9,10 +9,12 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:id="@+id/switcher_3D_layout">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:textColor="@color/pop_up_window_tv_color"
             android:id="@+id/switcher_tv"
             android:text="@string/switcher_3D"/>
@@ -29,10 +31,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:layout_gravity="center"
         android:id="@+id/switcher_view_id_layout">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:textColor="@color/pop_up_window_tv_color"
             android:id="@+id/view_id_tv"
             android:text="@string/view_id"/>
@@ -49,11 +53,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:id="@+id/switcher_wireframe_layout">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:id="@+id/switcher_wireframe_tv"
             android:textColor="@color/pop_up_window_tv_color"
             android:text="@string/wireframe"/>
