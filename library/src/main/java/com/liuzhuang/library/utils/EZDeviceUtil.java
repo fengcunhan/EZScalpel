@@ -1,6 +1,8 @@
 package com.liuzhuang.library.utils;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -101,5 +103,21 @@ public class EZDeviceUtil {
 
         return sDisplayDensity;
 
+    }
+
+    public static int getNavigationBarHeight(Context context) {
+        if (context == null) {
+            return 0;
+        }
+        int orientation = context.getResources().getConfiguration().orientation;
+        Resources resources = context.getResources();
+
+        int id = resources.getIdentifier(
+                orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_height_landscape",
+                "dimen", "android");
+        if (id > 0) {
+            return resources.getDimensionPixelSize(id);
+        }
+        return 0;
     }
 }

@@ -107,13 +107,15 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
             return;
         }
         switcherEntrance = new ImageView(mCurrentActivity);
-//        switcherEntrance = (ImageView) LayoutInflater.from(mCurrentActivity).inflate(R.layout.swicher_entrance, null);
         final int DEFAULT_SPACE_Y = EZDeviceUtil.dp2px(mCurrentActivity, 50);
-//        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        switcherEntrance.setLayoutParams(lp);
         switcherEntrance.setImageDrawable(mCurrentActivity.getResources().getDrawable(R.drawable.ic_3d_rotation_black_48dp));
-//        switcherEntrance.setX(0);
-//        switcherEntrance.setY(EZDeviceUtil.getScreenHeight(mCurrentActivity) - DEFAULT_SPACE_Y);
+        switcherEntrance.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                switcherEntrance.setX(EZDeviceUtil.getScreenWidth(mCurrentActivity) - switcherEntrance.getWidth());
+                switcherEntrance.setY(EZDeviceUtil.getScreenHeight(mCurrentActivity) - EZDeviceUtil.getNavigationBarHeight(mCurrentActivity) - DEFAULT_SPACE_Y - switcherEntrance.getHeight());
+            }
+        });
         switcherEntrance.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -150,8 +152,8 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
                         }
                         if (switcherEntrance.getY() < DEFAULT_SPACE_Y) {
                             animator.y(DEFAULT_SPACE_Y);
-                        } else if ((switcherEntrance.getY() + switcherEntrance.getHeight()) > (EZDeviceUtil.getScreenHeight(mCurrentActivity) - DEFAULT_SPACE_Y)) {
-                            animator.y(container.getHeight() - DEFAULT_SPACE_Y - switcherEntrance.getHeight());
+                        } else if ((switcherEntrance.getY() + switcherEntrance.getHeight()) > (EZDeviceUtil.getScreenHeight(mCurrentActivity) - EZDeviceUtil.getNavigationBarHeight(mCurrentActivity) - DEFAULT_SPACE_Y)) {
+                            animator.y(EZDeviceUtil.getScreenHeight(mCurrentActivity) - EZDeviceUtil.getNavigationBarHeight(mCurrentActivity) - DEFAULT_SPACE_Y - switcherEntrance.getHeight());
                         }
                         animator.setDuration(500).start();
                         break;
