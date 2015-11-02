@@ -9,11 +9,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import com.jakewharton.scalpel.ScalpelFrameLayout;
 import com.liuzhuang.library.R;
@@ -30,14 +30,18 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
     private boolean isScalpel3DChecked = false;
     private boolean isViewIdChecked = false;
     private boolean isWireframeChecked = false;
+    private ImageView switcherEntrance;
     private Switch switch3D;
     private Switch switchViewID;
-    private TextView switchViewIdTv;
+    private View switchViewIdLayout;
     private Switch switchWireFrame;
-    private TextView switchWireframeTv;
+    private View switchWireframeLayout;
     private View switcherParent;
     private float dX, dY;
     private float startX, startY;
+    private ViewGroup container;
+    private View rootView;
+    private Activity mCurrentActivity;
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -51,18 +55,18 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
 
     @Override
     public void onActivityResumed(Activity activity) {
-        final String param = null == activity.getIntent() ? null : activity.getIntent().getDataString();
-        EZLog.logi("CallBack_activity_intent", param);
+        EZLog.logi("CallBack_activity_intent", activity.toString());
         addRoot(activity);
     }
 
     private void addRoot(Activity activity) {
-        ViewGroup content = (ViewGroup)activity.findViewById(android.R.id.content);
-        if (content == null) {
-            EZLog.loge("addRoot", "content view is null");
+        container = (ViewGroup)activity.findViewById(android.R.id.content);
+        mCurrentActivity = activity;
+        if (container == null) {
+            EZLog.loge("addRoot", "container view is null");
             return;
         }
-        View rootView = content.getChildAt(0);
+        rootView = container.getChildAt(0);
         if (rootView == null) {
             EZLog.loge("addRoot", "root view is null");
             return;
@@ -74,14 +78,14 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
         scalpelFrameLayout = new EZScalpelFrameLayout(activity);
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         scalpelFrameLayout.setLayoutParams(lp);
-        content.removeView(rootView);
+        container.removeView(rootView);
         scalpelFrameLayout.addView(rootView);
-        content.addView(scalpelFrameLayout);
-        addEntrance(content, activity);
+        container.addView(scalpelFrameLayout);
+        addEntrance();
     }
     @Override
     public void onActivityPaused(Activity activity) {
-
+        reset();
     }
 
     @Override
@@ -96,17 +100,21 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        reset();
     }
 
-    private void addEntrance(final ViewGroup parent, final Context context) {
-        final ImageView switcher = new ImageView(context);
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        switcher.setLayoutParams(lp);
-        switcher.setImageResource(R.drawable.ic_3d_rotation_black_48dp);
-        switcher.setX(0);
-        switcher.setY(EZDeviceUtil.getScreenHeight(context) - 200);
-        switcher.setOnTouchListener(new View.OnTouchListener() {
+    private void addEntrance() {
+        if (container == null || mCurrentActivity == null) {
+            return;
+        }
+        switcherEntrance = new ImageView(mCurrentActivity);
+//        switcherEntrance = (ImageView) LayoutInflater.from(mCurrentActivity).inflate(R.layout.swicher_entrance, null);
+        final int DEFAULT_SPACE_Y = EZDeviceUtil.dp2px(mCurrentActivity, 50);
+//        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        switcherEntrance.setLayoutParams(lp);
+        switcherEntrance.setImageDrawable(mCurrentActivity.getResources().getDrawable(R.drawable.ic_3d_rotation_black_48dp));
+//        switcherEntrance.setX(0);
+//        switcherEntrance.setY(EZDeviceUtil.getScreenHeight(mCurrentActivity) - DEFAULT_SPACE_Y);
+        switcherEntrance.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 boolean isMove = false;
@@ -114,46 +122,49 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
                 switch (event.getActionMasked()) {
 
                     case MotionEvent.ACTION_DOWN:
-                        startX = switcher.getX();
-                        startY = switcher.getY();
-                        dX = switcher.getX() - event.getRawX();
-                        dY = switcher.getY() - event.getRawY();
+                        startX = switcherEntrance.getX();
+                        startY = switcherEntrance.getY();
+                        dX = switcherEntrance.getX() - event.getRawX();
+                        dY = switcherEntrance.getY() - event.getRawY();
                         break;
 
                     case MotionEvent.ACTION_MOVE:
 
-                        switcher.animate()
+                        switcherEntrance.animate()
                                 .x(event.getRawX() + dX)
                                 .y(event.getRawY() + dY)
                                 .setDuration(0)
                                 .start();
                         break;
                     case MotionEvent.ACTION_UP:
-                        if (startX != switcher.getX() || startY != switcher.getY()) {
+                        if (Math.abs(startX - switcherEntrance.getX()) >= 10 || Math.abs(startY - switcherEntrance.getY()) >= 10) {
                             isMove = true;
-                        }
-                        if (switcher.getX() > (EZDeviceUtil.getScreenWidth(context) - switcher.getWidth()) * 0.5) {
-                            switcher.animate()
-                                    .x(EZDeviceUtil.getScreenWidth(context) - switcher.getWidth())
-                                    .setDuration(500)
-                                    .start();
                         } else {
-                            switcher.animate()
-                                    .x(0)
-                                    .setDuration(500)
-                                    .start();
+                            return false;
                         }
+                        ViewPropertyAnimator animator = switcherEntrance.animate();
+                        if (switcherEntrance.getX() > (EZDeviceUtil.getScreenWidth(mCurrentActivity) - switcherEntrance.getWidth()) * 0.5) {
+                            animator.x(EZDeviceUtil.getScreenWidth(mCurrentActivity) - switcherEntrance.getWidth());
+                        } else {
+                            animator.x(0);
+                        }
+                        if (switcherEntrance.getY() < DEFAULT_SPACE_Y) {
+                            animator.y(DEFAULT_SPACE_Y);
+                        } else if ((switcherEntrance.getY() + switcherEntrance.getHeight()) > (EZDeviceUtil.getScreenHeight(mCurrentActivity) - DEFAULT_SPACE_Y)) {
+                            animator.y(container.getHeight() - DEFAULT_SPACE_Y - switcherEntrance.getHeight());
+                        }
+                        animator.setDuration(500).start();
                         break;
                     default:
                 }
                 return isMove;
             }
         });
-        parent.addView(switcher);
-        switcher.setOnClickListener(new View.OnClickListener() {
+        container.addView(switcherEntrance, new ViewGroup.LayoutParams(EZDeviceUtil.dp2px(mCurrentActivity, 48), EZDeviceUtil.dp2px(mCurrentActivity, 48)));
+        switcherEntrance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initSwitcher(context);
+                initSwitcher(mCurrentActivity);
 
                 switch3D.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -185,11 +196,11 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
                         }
                     }
                 });
-                PopupWindow popupWindow = new PopupWindow(switcherParent, (int) (EZDeviceUtil.getScreenWidth(context) * 0.6), ViewGroup.LayoutParams.WRAP_CONTENT, true);
+                PopupWindow popupWindow = new PopupWindow(switcherParent, (int) (EZDeviceUtil.getScreenWidth(mCurrentActivity) * 0.6), ViewGroup.LayoutParams.WRAP_CONTENT, true);
                 popupWindow.setTouchable(true);
                 popupWindow.setOutsideTouchable(true);
-                popupWindow.setBackgroundDrawable(context.getResources().getDrawable(R.color.pop_up_window_bg_color));
-                popupWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
+                popupWindow.setBackgroundDrawable(mCurrentActivity.getResources().getDrawable(R.color.pop_up_window_bg_color));
+                popupWindow.showAtLocation(container, Gravity.CENTER, 0, 0);
             }
         });
     }
@@ -203,11 +214,11 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
         }
         if (switchViewID == null) {
             switchViewID = (Switch) switcherParent.findViewById(R.id.switcher_view_id);
-            switchViewIdTv = (TextView) switcherParent.findViewById(R.id.view_id_tv);
+            switchViewIdLayout = switcherParent.findViewById(R.id.switcher_view_id_layout);
         }
         if (switchWireFrame == null) {
             switchWireFrame = (Switch) switcherParent.findViewById(R.id.switcher_wireframe);
-            switchWireframeTv = (TextView) switcherParent.findViewById(R.id.switcher_wireframe_tv);
+            switchWireframeLayout = switcherParent.findViewById(R.id.switcher_wireframe_layout);
         }
         switch3D.setChecked(isScalpel3DChecked);
         switchViewID.setChecked(isViewIdChecked);
@@ -217,28 +228,45 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
 
     private void displayViewIDAndWireFrame() {
         if (!isScalpel3DChecked) {
-            switchViewID.setVisibility(View.GONE);
-            switchViewIdTv.setVisibility(View.GONE);
-            switchWireFrame.setVisibility(View.GONE);
-            switchWireframeTv.setVisibility(View.GONE);
+            switchViewIdLayout.setVisibility(View.GONE);
+            switchWireframeLayout.setVisibility(View.GONE);
         } else {
-            switchViewID.setVisibility(View.VISIBLE);
-            switchViewIdTv.setVisibility(View.VISIBLE);
-            switchWireFrame.setVisibility(View.VISIBLE);
-            switchWireframeTv.setVisibility(View.VISIBLE);
+            switchViewIdLayout.setVisibility(View.VISIBLE);
+            switchWireframeLayout.setVisibility(View.VISIBLE);
         }
     }
 
     private void reset() {
+        if (scalpelFrameLayout == null || mCurrentActivity == null) {
+            return;
+        }
+        if (container == null) {
+            container = (ViewGroup) mCurrentActivity.findViewById(android.R.id.content);
+        }
+        if (scalpelFrameLayout == null) {
+            return;
+        }
+        if (rootView == null) {
+            rootView = scalpelFrameLayout.getChildAt(0);
+        }
+
+        container.removeAllViews();
+        scalpelFrameLayout.removeView(rootView);
+        container.addView(rootView);
         isScalpel3DChecked = false;
         isViewIdChecked = false;
         isWireframeChecked = false;
+        switcherEntrance = null;
         switch3D = null;
         switchViewID = null;
         switchWireFrame = null;
-        switchWireframeTv = null;
-        switchViewIdTv = null;
+        switchWireframeLayout = null;
+        switchViewIdLayout = null;
         switcherParent = null;
+        scalpelFrameLayout = null;
+        container = null;
+        rootView = null;
+        mCurrentActivity = null;
         EZLog.logi("reset", "reset_finish");
     }
 }
