@@ -28,8 +28,6 @@ import com.liuzhuang.library.view.EZScalpelFrameLayout;
 public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycleCallbacks {
     private ScalpelFrameLayout scalpelFrameLayout;
     private boolean isScalpel3DChecked = false;
-    private boolean isViewIdChecked = false;
-    private boolean isWireframeChecked = false;
     private ImageView switcherEntrance;
     private Switch switch3D;
     private Switch switchViewID;
@@ -37,11 +35,14 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
     private Switch switchWireFrame;
     private View switchWireframeLayout;
     private View switcherParent;
+    private Switch switchCustomBg;
     private float dX, dY;
     private float startX, startY;
     private ViewGroup container;
     private View rootView;
     private Activity mCurrentActivity;
+    private View bgView;
+    private PopupWindow popupWindow;
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -71,18 +72,10 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
             EZLog.loge("addRoot", "root view is null");
             return;
         }
-        if (rootView instanceof ScalpelFrameLayout) {
-            EZLog.logi("addRoot", "already added");
-            return;
-        }
-        scalpelFrameLayout = new EZScalpelFrameLayout(activity);
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        scalpelFrameLayout.setLayoutParams(lp);
-        container.removeView(rootView);
-        scalpelFrameLayout.addView(rootView);
-        container.addView(scalpelFrameLayout);
+        initScalpel();
         addEntrance();
     }
+
     @Override
     public void onActivityPaused(Activity activity) {
         reset();
@@ -166,45 +159,51 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
         switcherEntrance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initSwitcher(mCurrentActivity);
-
-                switch3D.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (scalpelFrameLayout != null) {
-                            isScalpel3DChecked = isChecked;
-                            displayViewIDAndWireFrame();
-                            scalpelFrameLayout.setLayerInteractionEnabled(isChecked);
-                        }
-                    }
-                });
-
-                switchViewID.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (scalpelFrameLayout != null) {
-                            isViewIdChecked = isChecked;
-                            scalpelFrameLayout.setDrawIds(isChecked);
-                        }
-                    }
-                });
-
-                switchWireFrame.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (scalpelFrameLayout != null) {
-                            isWireframeChecked = isChecked;
-                            scalpelFrameLayout.setDrawViews(!isChecked);
-                        }
-                    }
-                });
-                PopupWindow popupWindow = new PopupWindow(switcherParent, (int) (EZDeviceUtil.getScreenWidth(mCurrentActivity) * 0.6), ViewGroup.LayoutParams.WRAP_CONTENT, true);
-                popupWindow.setTouchable(true);
-                popupWindow.setOutsideTouchable(true);
-                popupWindow.setBackgroundDrawable(mCurrentActivity.getResources().getDrawable(R.color.pop_up_window_bg_color));
+                initPopupWindow();
                 popupWindow.showAtLocation(container, Gravity.CENTER, 0, 0);
             }
         });
+    }
+
+    private void initScalpel() {
+        if (mCurrentActivity == null || container == null || rootView == null) {
+            EZLog.logi("addScalpel", "add failed!");
+            return;
+        }
+        if (rootView instanceof ScalpelFrameLayout) {
+            EZLog.logi("addScalpel", "already added");
+            return;
+        }
+        if (scalpelFrameLayout == null) {
+            scalpelFrameLayout = new EZScalpelFrameLayout(mCurrentActivity);
+            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            scalpelFrameLayout.setLayoutParams(lp);
+        }
+        container.removeView(rootView);
+        scalpelFrameLayout.removeView(rootView);
+        scalpelFrameLayout.addView(rootView);
+        container.removeView(scalpelFrameLayout);
+        container.addView(scalpelFrameLayout);
+    }
+
+    private void removeScalpel() {
+        if (mCurrentActivity == null || container == null || rootView == null) {
+            EZLog.logi("removeScalpel", "remove failed!");
+            return;
+        }
+        container.removeView(scalpelFrameLayout);
+        scalpelFrameLayout.removeView(rootView);
+        container.addView(rootView);
+    }
+
+    private void initPopupWindow() {
+        initSwitcher(mCurrentActivity);
+        if (popupWindow == null && switcherParent != null && mCurrentActivity != null) {
+            popupWindow = new PopupWindow(switcherParent, (int) (EZDeviceUtil.getScreenWidth(mCurrentActivity) * 0.75), ViewGroup.LayoutParams.WRAP_CONTENT, true);
+            popupWindow.setTouchable(true);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setBackgroundDrawable(mCurrentActivity.getResources().getDrawable(R.color.pop_up_window_bg_color));
+        }
     }
 
     private void initSwitcher(Context context) {
@@ -213,28 +212,76 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
         }
         if (switch3D == null) {
             switch3D = (Switch) switcherParent.findViewById(R.id.switcher_3D);
+            switch3D.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    isScalpel3DChecked = isChecked;
+                    displayViewIDAndWireFrame();
+                    scalpelFrameLayout.setLayerInteractionEnabled(isChecked);
+                }
+            });
         }
         if (switchViewID == null) {
             switchViewID = (Switch) switcherParent.findViewById(R.id.switcher_view_id);
-            switchViewIdLayout = switcherParent.findViewById(R.id.switcher_view_id_layout);
+            switchViewID.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (scalpelFrameLayout != null) {
+                        scalpelFrameLayout.setDrawIds(isChecked);
+                    }
+                }
+            });
         }
         if (switchWireFrame == null) {
             switchWireFrame = (Switch) switcherParent.findViewById(R.id.switcher_wireframe);
-            switchWireframeLayout = switcherParent.findViewById(R.id.switcher_wireframe_layout);
+            switchWireFrame.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (scalpelFrameLayout != null) {
+                        scalpelFrameLayout.setDrawViews(!isChecked);
+                    }
+                }
+            });
         }
-        switch3D.setChecked(isScalpel3DChecked);
-        switchViewID.setChecked(isViewIdChecked);
-        switchWireFrame.setChecked(isWireframeChecked);
+        if (switchCustomBg == null) {
+            switchCustomBg = (Switch) switcherParent.findViewById(R.id.switcher_custom_bg);
+            switchCustomBg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    addBackground(isChecked);
+                }
+            });
+        }
         displayViewIDAndWireFrame();
     }
 
     private void displayViewIDAndWireFrame() {
+        if (switchViewIdLayout == null) {
+            switchViewIdLayout = switcherParent.findViewById(R.id.switcher_view_id_layout);
+        }
+        if (switchWireframeLayout == null) {
+            switchWireframeLayout = switcherParent.findViewById(R.id.switcher_wireframe_layout);
+        }
         if (!isScalpel3DChecked) {
             switchViewIdLayout.setVisibility(View.GONE);
             switchWireframeLayout.setVisibility(View.GONE);
         } else {
             switchViewIdLayout.setVisibility(View.VISIBLE);
             switchWireframeLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void addBackground(boolean add) {
+        if (container == null || mCurrentActivity == null) {
+            return;
+        }
+        if (bgView == null) {
+            bgView = new View(mCurrentActivity);
+            bgView.setBackgroundColor(mCurrentActivity.getResources().getColor(R.color.main_bg_color));
+        }
+        container.removeView(bgView);
+        if (add) {
+            container.addView(bgView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
     }
 
@@ -256,8 +303,8 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
         scalpelFrameLayout.removeView(rootView);
         container.addView(rootView);
         isScalpel3DChecked = false;
-        isViewIdChecked = false;
-        isWireframeChecked = false;
+        bgView = null;
+        popupWindow = null;
         switcherEntrance = null;
         switch3D = null;
         switchViewID = null;
@@ -269,6 +316,7 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
         container = null;
         rootView = null;
         mCurrentActivity = null;
+        switchCustomBg = null;
         EZLog.logi("reset", "reset_finish");
     }
 }

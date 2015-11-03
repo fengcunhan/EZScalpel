@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import com.jakewharton.scalpel.ScalpelFrameLayout;
 
 /**
- * 带有开关的ScalpelFrameLayout
+ *
  * Created by liuzhuang on 10/29/15.
  */
 public class EZScalpelFrameLayout extends ScalpelFrameLayout {

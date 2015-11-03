@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="pop_up_window_bg_color">#666666</color>
-    <color name="pop_up_window_tv_color">#aaaaaa</color>
+    <color name="pop_up_window_tv_color">#ffffff</color>
+    <color name="main_bg_color">#ffffff</color>
 </resources>

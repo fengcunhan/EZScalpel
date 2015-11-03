@@ -6,7 +6,7 @@ It is a wrapper of [https://github.com/JakeWharton/scalpel](https://github.com/J
 
 1. Add dependency to your `build.gradle`:
 
-		com.liuzhuang.opensource:ezscalpel:0.0.1
+		com.liuzhuang.opensource:ezscalpel:0.0.2
 
 2. Add this code to your custome `Application's onCreate()`:
 

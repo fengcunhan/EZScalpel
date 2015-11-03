@@ -72,4 +72,26 @@
             android:layout_toRightOf="@id/switcher_wireframe_tv"/>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:id="@+id/switcher_bg_layout">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:textColor="@color/pop_up_window_tv_color"
+            android:id="@+id/switcher_bg_tv"
+            android:text="@string/custom_bg"/>
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/switcher_custom_bg"
+            android:layout_alignBaseline="@id/switcher_bg_tv"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/switcher_bg_tv"/>
+    </RelativeLayout>
+
 </LinearLayout>
