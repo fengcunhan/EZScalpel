@@ -4,10 +4,13 @@ It is a wrapper of [https://github.com/JakeWharton/scalpel](https://github.com/J
 
 # How to use
 
-1. Add dependency: you can clone this peoject and add the module `library` as your android library.
-2. Add this code to your custome `Application's onCreate()`
+1. Add dependency to your `build.gradle`:
 
-    `EZScalpel.getInstance().setUp(this);`
+		compile 'com.liuzhuang.opensource:library:0.0.2'
+
+2. Add this code to your custome `Application's onCreate()`:
+
+    	EZScalpel.getInstance().setUp(this);
 
 # Effect
 
