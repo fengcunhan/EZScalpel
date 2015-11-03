@@ -61,6 +61,7 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
     }
 
     private void addRoot(Activity activity) {
+        reset();
         container = (ViewGroup)activity.findViewById(android.R.id.content);
         mCurrentActivity = activity;
         if (container == null) {
@@ -286,17 +287,8 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
     }
 
     private void reset() {
-        if (scalpelFrameLayout == null || mCurrentActivity == null) {
+        if (scalpelFrameLayout == null || mCurrentActivity == null || container == null || rootView == null) {
             return;
-        }
-        if (container == null) {
-            container = (ViewGroup) mCurrentActivity.findViewById(android.R.id.content);
-        }
-        if (scalpelFrameLayout == null) {
-            return;
-        }
-        if (rootView == null) {
-            rootView = scalpelFrameLayout.getChildAt(0);
         }
 
         container.removeAllViews();
