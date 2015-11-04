@@ -9,9 +9,27 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.liuzhuang.library.SettingsActivity">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#212121"
+        android:text="Activity Filter"
+        android:textSize="20dp"
+        android:id="@+id/ezscalpel_title"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ezscalpel_title"
+        android:textColor="#424242"
+        android:layout_marginTop="12dp"
+        android:text="Close filter to show scalpel on every page. Add activity name to filter"
+        android:textSize="12dp"
+        android:id="@+id/ezscalpel_des"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/ezscalpel_des"
         android:id="@+id/filter_switcher_layout"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -21,8 +39,8 @@
             android:textSize="18dp"
             android:text="close filter: "/>
         <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
             android:id="@+id/ezscalpel_filter_switcher"/>
     </LinearLayout>
