@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">library</string>
+    <string name="app_name">Scalpel Filter</string>
     <string name="switcher_3D">Scalpel 3D</string>
     <string name="view_id">Show view ID</string>
     <string name="wireframe">wireframe</string>
     <string name="custom_bg">custom background</string>
+    <string name="filter_entrance_name">EZFilter</string>
 </resources>

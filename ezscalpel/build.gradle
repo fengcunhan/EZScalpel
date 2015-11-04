@@ -35,7 +35,8 @@ install {
             project {
                 packaging 'aar'
                 // Add your description here
-                name 'This is a library to use https://github.com/JakeWharton/scalpel easily and without coupling with existing code.' 	//项目描述
+                name 'This is a library to use https://github.com/JakeWharton/scalpel easily and without coupling with existing code.'
+                //项目描述
                 url 'http://techsummary.github.io/'
                 // Set your license
                 licenses {
@@ -46,7 +47,7 @@ install {
                 }
                 developers {
                     developer {
-                        id 'liuzhuang'		//填写的一些基本信息
+                        id 'liuzhuang'        //填写的一些基本信息
                         name 'liuzhuang'
                         email 'lznwpu@gmail.com'
                     }

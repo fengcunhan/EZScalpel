@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="setting_theme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:icon">@android:color/transparent</item>
+    </style>
+</resources>

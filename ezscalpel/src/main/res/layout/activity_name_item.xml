@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:gravity="center_vertical"
+    android:padding="16dp"
+    android:layout_height="64dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:layout_toLeftOf="@+id/activity_name_item_del"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/activity_name_item_tv"/>
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="16dp"
+        android:id="@id/activity_name_item_del"
+        android:src="@drawable/ic_delete_black_24dp"/>
+</RelativeLayout>

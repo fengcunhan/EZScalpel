@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -56,8 +57,12 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
 
     @Override
     public void onActivityResumed(Activity activity) {
-        EZLog.logi("CallBack_activity_intent", activity.toString());
-        addRoot(activity);
+        if (EZScalpelFilter.filter(activity, activity.getClass().getName())) {
+            EZLog.logi("activity_name_in_filter", activity.getClass().getName());
+            addRoot(activity);
+        } else {
+            EZLog.logd("activity_name_not_in_filter", activity.getClass().getName());
+        }
     }
 
     private void addRoot(Activity activity) {
@@ -99,7 +104,6 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        mCurrentActivity = null;
     }
 
     private void addEntrance() {
@@ -161,7 +165,9 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
                             } else if ((switcherEntrance.getY() + switcherEntrance.getHeight()) > (EZDeviceUtil.getScreenHeight(mCurrentActivity) - EZDeviceUtil.getNavigationBarHeight(mCurrentActivity) - DEFAULT_SPACE_Y)) {
                                 animator.y(EZDeviceUtil.getScreenHeight(mCurrentActivity) - EZDeviceUtil.getNavigationBarHeight(mCurrentActivity) - DEFAULT_SPACE_Y - switcherEntrance.getHeight());
                             }
-                            animator.setDuration(500).start();
+                            animator.setDuration(500)
+                                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                                    .start();
                             break;
                         default:
                     }
@@ -253,9 +259,14 @@ public class EZActivityLifeCycleCallBack implements Application.ActivityLifecycl
                 switch3D.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        isScalpel3DChecked = isChecked;
-                        displayViewIDAndWireFrame();
-                        scalpelFrameLayout.setLayerInteractionEnabled(isChecked);
+                        try {
+                            isScalpel3DChecked = isChecked;
+                            displayViewIDAndWireFrame();
+                            scalpelFrameLayout.setLayerInteractionEnabled(isChecked);
+                        } catch (Throwable e) {
+                            EZLog.loge("scalpel3DCheckedChanged", e.getMessage());
+                        }
+
                     }
                 });
             }
