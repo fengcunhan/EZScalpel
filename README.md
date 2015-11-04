@@ -6,7 +6,7 @@ It is a wrapper of [https://github.com/JakeWharton/scalpel](https://github.com/J
 
 1. Add dependency to your `build.gradle`:
 
-		com.liuzhuang.opensource:ezscalpel:0.0.4
+		com.liuzhuang.opensource:ezscalpel:0.0.5
 
 2. Add this code to your custome `Application's onCreate()`:
 
@@ -17,9 +17,15 @@ It is a wrapper of [https://github.com/JakeWharton/scalpel](https://github.com/J
 
 ![effect](./effect.gif)
 
+# Filter
+
+After including the library, your launcher will have an icon as same as your app with name "EZFilter". Close filter switch to show EZScalpel on every page. Add a full activity name to show EZScalpel only on expected pages.
+
+![filter](./filter.png)
+
 # License
 
-	Copyright 2015 LiuZhuang
+	Copyright 2015 Liu Zhuang
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
